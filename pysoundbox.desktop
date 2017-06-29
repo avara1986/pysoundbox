@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Exec=bash -c 'python /var/www/html/pysoundbox/main.py'
+Name=Py Sound Box
+GenericName=Py Sound Box
+Comment=Py Sound Box
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Categories=Application;
