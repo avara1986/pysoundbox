@@ -1,12 +1,23 @@
 # pysoundbox
 
-Add this lib ass shortcut and play sounds as a soundbox.
+Play sounds as a soundbox.
 
-To add a script command to a shorcut, see config folder.
+## Installation
+
+```bash
+pip install -e git+https://github.com/avara1986/pysoundbox.git#egg=pysoundbox
+```
+
+```bash
+>> pysoundbox
+```
+
+To add a script command to a key shorcut, see config folder and this doc:
 
 Gnome: see [this link](https://unix.stackexchange.com/questions/41283/how-to-run-the-terminal-using-keyboard-shortcuts-in-gnome-2)
 
 KDE: see [this link](https://ubuntuforums.org/showthread.php?t=1870198)
+
 
 
 ## Requirements
