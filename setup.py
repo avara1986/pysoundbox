@@ -29,7 +29,7 @@ setup(
     ],
     license="MIT",
     platforms=["any"],
-    keywords="python, sounds,
+    keywords="python, sounds",
     url='https://github.com/avara1986/pysoundbox.git',
     test_suite='nose.collector',
     packages=find_packages(),
