@@ -35,7 +35,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'pysoundbox = main'
+            'pysoundbox = main:PySoundBox'
         ]
     },
     zip_safe=True,

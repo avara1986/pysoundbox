@@ -41,6 +41,12 @@ class PySoundBox(object):
     def __init__(self):
         self.screen = SCREEN
         self.sound_box()
+        self.draw_window()
+        self.add_title("Welcome to PySoundBox")
+        self.add_paragraph("Press keys to play sounds. Hit 'q' to quit")
+        self.loop()
+        curses.endwin()
+
 
     def add_title(self, title):
         self.screen.addstr(0, 10, title, curses.A_BOLD)
@@ -95,8 +101,3 @@ class PySoundBox(object):
 
 if __name__ == '__main__':
     psb = PySoundBox()
-    psb.draw_window()
-    psb.add_title("Welcome to PySoundBox")
-    psb.add_paragraph("Press keys to play sounds. Hit 'q' to quit")
-    psb.loop()
-    curses.endwin()
