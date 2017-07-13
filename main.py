@@ -1,10 +1,16 @@
 #!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 
 import curses
 import os
 import subprocess
+import thread
+from time import sleep
+
+import numpy as np
+from pydub import AudioSegment
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -12,14 +18,17 @@ SCREEN = curses.initscr()
 
 curses.noecho()
 curses.cbreak()
+curses.curs_set(0)
 curses.start_color()
 curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_GREEN)
 curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
 curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLACK)
 """
 for i in range(0, curses.COLORS):
     curses.init_pair(i, i, -1)
 """
+
 
 class PySoundBox(object):
     SOUNDS_MAP = {
@@ -29,6 +38,7 @@ class PySoundBox(object):
         ord('w'): os.path.join(PATH, 'sounds/WhoLetTheDogsOut.mp3'),
         ord('F'): os.path.join(PATH, 'sounds/Fatality.mp3'),
         ord('h'): os.path.join(PATH, 'sounds/Hadouken.mp3'),
+        ord('g'): os.path.join(PATH, 'sounds/losgandules.mp3'),
     }
     _COLOR_RED = 1
     _COLOR_GREEN = 2
@@ -40,13 +50,11 @@ class PySoundBox(object):
 
     def __init__(self):
         self.screen = SCREEN
-        self.sound_box()
         self.draw_window()
         self.add_title("Welcome to PySoundBox")
         self.add_paragraph("Press keys to play sounds. Hit 'q' to quit")
         self.loop()
         curses.endwin()
-
 
     def add_title(self, title):
         self.screen.addstr(0, 10, title, curses.A_BOLD)
@@ -57,46 +65,63 @@ class PySoundBox(object):
     def draw_window(self):
         self.screen.border(0)
 
-    def sound_box(self):
-        self._create_pad()
-        self._make_textboxes()
+    def draw_audio(self, audio_src):
+        audio = AudioSegment.from_file(audio_src)
+        data = np.fromstring(audio._data, np.int16)
 
-    def _create_pad(self):
-        self.PAD_WIDTH = 400
-        self.PAD_HEIGHT = 10000
-        """ Creates a big self.pad to place the textboxes in. """
-        self.pad = curses.newpad(self.PAD_HEIGHT, self.PAD_WIDTH)
-        self.pad.box()
+        BAR_HEIGHT = 60
 
-    def _make_textboxes(self):
-        """ Build the textboxes in the pad center and put them in the
-            horizontal middle of the pad. """
-        # Get the actual screensize.
-        self.TEXTBOX_WIDTH = 50
-        self.TEXTBOX_HEIGHT = 6
+        length = len(data)
+        RATIO = float(length) / float(audio.duration_seconds * 100)
+        count = 0
+        maximum_item = 0
+        max_array = []
+        highest_line = 0
 
-        maxy, maxx = self.screen.getmaxyx()
+        for d in data:
+            if count < RATIO:
+                count = count + 1
 
-        windows = []
-        i = 1
-        window = self.pad.derwin(self.TEXTBOX_HEIGHT,
-                self.TEXTBOX_WIDTH, i, self.PAD_WIDTH//2-self.TEXTBOX_WIDTH//2)
+                if abs(d) > maximum_item:
+                    maximum_item = abs(d)
+            else:
+                max_array.append(maximum_item)
 
-        window.box()
-        window.addstr(4, 4, 'test')
+                if maximum_item > highest_line:
+                    highest_line = maximum_item
+
+                maximum_item = 0
+                count = 1
+
+        line_ratio = highest_line / BAR_HEIGHT
+
+        for item in max_array:
+            item_height = item / line_ratio if item != 0 else 0
+
+            self.screen.addstr(30, 20, "".join(["#" for _ in range(item_height)]), curses.color_pair(4))
+            self.screen.clrtoeol()
+            self.screen.refresh()
+            sleep(0.01)
+
+    def play_audio(self, sound):
+        sleep(0.2)
+        subprocess.Popen(['mpg123', '-q', sound])
 
     def loop(self):
         key = ''
+        sound = self.SOUNDS_MAP[ord('o')]
+
         while key != ord('q'):
             key = self.screen.getch()
             if key in self.SOUNDS_MAP.keys():
                 sound = self.SOUNDS_MAP[key]
                 self.screen.addstr(20, 20, "Play Sound: {}".format(sound), curses.color_pair(3))
-                subprocess.Popen(['mpg123', '-q', sound])
-
+                thread.start_new_thread(self.play_audio, (sound,))
+                thread.start_new_thread(self.draw_audio, (sound,))
+                # self.draw_audio(sound)
                 self.screen.clrtoeol()
                 self.screen.refresh()
-
+                self.draw_window()
 
 
 if __name__ == '__main__':

@@ -38,5 +38,9 @@ setup(
             'pysoundbox = main:PySoundBox'
         ]
     },
+    install_requires=[
+        "pydub>=0.19.0",
+        "numpy==1.13.0"
+    ],
     zip_safe=True,
 )
