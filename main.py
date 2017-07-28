@@ -39,6 +39,8 @@ class PySoundBox(object):
         ord('F'): os.path.join(PATH, 'sounds/Fatality.mp3'),
         ord('h'): os.path.join(PATH, 'sounds/Hadouken.mp3'),
         ord('g'): os.path.join(PATH, 'sounds/losgandules.mp3'),
+        ord('b'): os.path.join(PATH, 'sounds/boo.mp3'),
+        ord('B'): os.path.join(PATH, 'sounds/boo.mp3'),
     }
     _COLOR_RED = 1
     _COLOR_GREEN = 2
