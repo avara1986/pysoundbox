@@ -69,7 +69,7 @@ class PySoundBox(object):
         audio = AudioSegment.from_file(audio_src)
         data = np.fromstring(audio._data, np.int16)
 
-        BAR_HEIGHT = 60
+        BAR_HEIGHT = 120
 
         length = len(data)
         RATIO = float(length) / float(audio.duration_seconds * 100)
@@ -101,10 +101,10 @@ class PySoundBox(object):
             self.screen.addstr(30, 20, "".join(["#" for _ in range(item_height)]), curses.color_pair(4))
             self.screen.clrtoeol()
             self.screen.refresh()
-            sleep(0.01)
+            sleep(0.00955)
 
     def play_audio(self, sound):
-        sleep(0.2)
+        sleep(0.25)
         subprocess.Popen(['mpg123', '-q', sound])
 
     def loop(self):
